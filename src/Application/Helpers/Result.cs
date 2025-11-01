@@ -2,50 +2,61 @@
 
 public class Result<T>
 {
-    public bool Success { get; }
-    public T Data { get; }
-    public string Message { get; }
-    public string[] ValidationErrors { get; }
+    public bool IsSuccess { get; }
+    public bool IsFailure => !IsSuccess;
+    public T Value { get; }
+    public Error Error { get; }
 
-    private Result(bool success, T data, string message, string[]? validationErrors = null)
+    private Result(T value)
     {
-        Success = success;
-        Data = data;
-        Message = message;
-        ValidationErrors = validationErrors ?? [];
+        IsSuccess = true;
+        Value = value;
+        Error = Error.None;
     }
 
-    public static Result<T> Succeeded(T value, string message = "Operation completed successfully")
-        => new Result<T>(true, value, message);
-
-    public static Result<T> Failed(string message)
-        => new Result<T>(false, default!, message);
-
-    public static Result<T?> ValidationFailure(string[]? validationErrors, string message = "Validation failed")
+    private Result(Error error)
     {
-        return new Result<T?>(false, default, message, validationErrors);
+        IsSuccess = false;
+        Value = default!;
+        Error = error;
     }
+
+    public static Result<T> Succeeded(T value) => new Result<T>(value);
+    public static Result<T> Failed(Error error) => new Result<T>(error);
 }
 
-public class Result
+public record Error
 {
-    public bool Success { get; }
-    public string Message { get; }
-    public string[] ValidationErrors { get; }
+    public static readonly Error None = new(string.Empty, string.Empty, ErrorType.Failure);
 
-    private Result(bool success, string message, string[]? validationErrors = null)
+    public string Code { get; }
+    public string Description { get; }
+    public ErrorType Type { get; }
+
+    private Error(string code, string description, ErrorType type)
     {
-        Success = success;
-        Message = message;
-        ValidationErrors = validationErrors ?? Array.Empty<string>();
+        Code = code;
+        Description = description;
+        Type = type;
     }
 
-    public static Result Succeeded(string message = "Operation completed successfully")
-        => new Result(true, message);
+    public static Error NotFound(string code, string description)
+        => new Error(code, description, ErrorType.NotFound);
 
-    public static Result Failed(string message)
-        => new Result(false, message);
+    public static Error Validation(string code, string description)
+        => new Error(code, description, ErrorType.Validation);
 
-    public static Result ValidationFailed(string[]? validationErrors, string message = "Validation failed")
-        => new Result(false, message, validationErrors);
+    public static Error Failure(string code, string description)
+        => new Error(code, description, ErrorType.Failure);
+
+    public static Error Conflict(string code, string description)
+        => new Error(code, description, ErrorType.Conflict);
+}
+
+public enum ErrorType
+{
+    Failure = 0,
+    Validation = 1,
+    NotFound = 2,
+    Conflict = 3
 }

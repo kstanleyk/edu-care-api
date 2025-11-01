@@ -17,7 +17,7 @@ public static class ServiceCollectionExtensions
     {
         // Entity Framework
         services.AddDbContext<EduCareContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("Data"))
+            options.UseNpgsql(configuration.GetConnectionString("Value"))
                 .UseSnakeCaseNamingConvention())
             .AddTransient<EduCareDatabaseSeeder>();
 
