@@ -1,6 +1,6 @@
-﻿using TegWallet.Application.Helpers;
+﻿using EduCare.Application.Helpers;
 
-namespace TegWallet.Application.Features;
+namespace EduCare.Application.Features;
 
 public class RequestHandlerBase : Disposable
 {

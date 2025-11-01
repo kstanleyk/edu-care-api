@@ -1,7 +1,7 @@
-﻿using MediatR;
-using TegWallet.Application.Interfaces.Auth;
+﻿using EduCare.Application.Interfaces.Auth;
+using MediatR;
 
-namespace TegWallet.Application.Features.Auth.Permission.Queries;
+namespace EduCare.Application.Features.Auth.Permission.Queries;
 
 public record PermissionsQuery : IRequest<string[]>
 {

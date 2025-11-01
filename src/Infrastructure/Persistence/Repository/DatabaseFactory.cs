@@ -1,23 +1,23 @@
 ﻿using System.Data;
+using EduCare.Application.Helpers;
+using EduCare.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
-using TegWallet.Application.Helpers;
-using TegWallet.Infrastructure.Persistence.Context;
 
-namespace TegWallet.Infrastructure.Persistence.Repository;
+namespace EduCare.Infrastructure.Persistence.Repository;
 
 public class DatabaseFactory : Disposable, IDatabaseFactory
 {
-    public DatabaseFactory(TegWalletContext dataContext)
+    public DatabaseFactory(EduCareContext dataContext)
     {
         _dataContext = dataContext;
         _db = new NpgsqlConnection(GetContext().Database.GetDbConnection().ConnectionString);
     }
 
-    private readonly TegWalletContext _dataContext;
+    private readonly EduCareContext _dataContext;
     private readonly IDbConnection _db;
 
-    public TegWalletContext GetContext()
+    public EduCareContext GetContext()
     {
         return _dataContext;
     }
@@ -35,6 +35,6 @@ public class DatabaseFactory : Disposable, IDatabaseFactory
 
 public interface IDatabaseFactory : IDisposable
 {
-    TegWalletContext GetContext();
+    EduCareContext GetContext();
     IDbConnection GetConnection();
 }

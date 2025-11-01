@@ -1,9 +1,7 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace TegWallet.WebApi.Controllers
+namespace EduCare.CoreApi.Controllers
 {
     [ApiController]
     [Route("api/v{version:apiVersion}/[controller]")]

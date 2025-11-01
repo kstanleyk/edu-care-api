@@ -1,4 +1,4 @@
-﻿namespace TegWallet.Application.Models.Core.EducationLevel;
+﻿namespace EduCare.Application.Models.Core.EducationLevel;
 
 public class EditEducationLevelRequest
 {

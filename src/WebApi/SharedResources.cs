@@ -1,3 +1,3 @@
-﻿namespace TegWallet.WebApi;
+﻿namespace EduCare.CoreApi;
 
 public class SharedResources { }

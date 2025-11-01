@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using EduCare.Domain.Entity.Auth;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using TegWallet.Domain.Entity.Auth;
 
-namespace TegWallet.Infrastructure.Persistence.Configurations.Auth;
+namespace EduCare.Infrastructure.Persistence.Configurations.Auth;
 
 public class RolePermissionConfiguration : IEntityTypeConfiguration<RolePermission>
 {

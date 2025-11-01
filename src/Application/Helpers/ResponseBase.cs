@@ -1,4 +1,4 @@
-﻿namespace TegWallet.Application.Helpers;
+﻿namespace EduCare.Application.Helpers;
 
 public abstract class BaseResponse
 {

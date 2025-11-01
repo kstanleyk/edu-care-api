@@ -1,4 +1,4 @@
-﻿namespace TegWallet.Domain.Entity;
+﻿namespace EduCare.Domain.Entity;
 
 public interface IEntity<TId>: IEntity
 {

@@ -1,4 +1,4 @@
-﻿namespace TegWallet.WebApi.Models;
+﻿namespace EduCare.CoreApi.Models;
 
 public class CurrentUserVm
 {

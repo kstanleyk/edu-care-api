@@ -1,8 +1,8 @@
 ﻿using System.Reflection;
+using EduCare.Application.Interfaces.Localization;
 using Microsoft.Extensions.Localization;
-using TegWallet.Application.Interfaces.Localization;
 
-namespace TegWallet.WebApi.Localization;
+namespace EduCare.CoreApi.Localization;
 
 public class AppLocalizer : IAppLocalizer
 {

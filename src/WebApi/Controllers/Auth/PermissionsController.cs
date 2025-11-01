@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using TegWallet.Application.Features.Auth.Permission.Queries;
-using TegWallet.WebApi.Services;
+﻿using EduCare.Application.Features.Auth.Permission.Queries;
+using EduCare.CoreApi.Services;
+using Microsoft.AspNetCore.Mvc;
 
-namespace TegWallet.WebApi.Controllers.Auth;
+namespace EduCare.CoreApi.Controllers.Auth;
 
 public class PermissionsController(CurrentUserService currentUserService) : ApiControllerBase<PermissionsController>
 {

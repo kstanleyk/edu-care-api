@@ -1,4 +1,4 @@
-﻿namespace TegWallet.Application.Helpers.Exceptions;
+﻿namespace EduCare.Application.Helpers.Exceptions;
 
 public class ValidationException : ApplicationException
 {

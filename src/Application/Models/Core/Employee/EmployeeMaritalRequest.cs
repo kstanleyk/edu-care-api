@@ -1,4 +1,4 @@
-﻿namespace TegWallet.Application.Models.Core.Employee;
+﻿namespace EduCare.Application.Models.Core.Employee;
 
 public class EmployeeMaritalRequest
 {

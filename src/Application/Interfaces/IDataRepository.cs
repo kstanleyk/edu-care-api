@@ -1,8 +1,8 @@
 ﻿using System.Linq.Expressions;
-using TegWallet.Application.Helpers;
-using TegWallet.Domain.Abstractions;
+using EduCare.Application.Helpers;
+using EduCare.Domain.Abstractions;
 
-namespace TegWallet.Application.Interfaces;
+namespace EduCare.Application.Interfaces;
 
 public interface IRepository { }
 

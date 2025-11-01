@@ -1,4 +1,4 @@
-﻿namespace TegWallet.Domain.Entity.Auth;
+﻿namespace EduCare.Domain.Entity.Auth;
 
 public class User 
 {

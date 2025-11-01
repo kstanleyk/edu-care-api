@@ -1,17 +1,18 @@
 ﻿using System.Data;
 using System.Globalization;
 using System.Linq.Expressions;
+using EduCare.Application.Helpers;
+using EduCare.Application.Interfaces;
+using EduCare.Domain.Abstractions;
+using EduCare.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
-using TegWallet.Application.Helpers;
-using TegWallet.Application.Interfaces;
-using TegWallet.Domain.Abstractions;
-using TegWallet.Infrastructure.Persistence.Context;
 
-namespace TegWallet.Infrastructure.Persistence.Repository;
+namespace EduCare.Infrastructure.Persistence.Repository;
 
 public abstract class DataRepositoryBase<TEntity, TContext, TId>(TContext context) : Disposable, IRepository<TEntity, TId>
     where TEntity : Entity<TId>
     where TContext : DbContext
+    where TId : notnull
 {
     protected TContext Context = context;
     protected IDbConnection Db = context.Database.GetDbConnection();
@@ -433,11 +434,11 @@ public abstract class DataRepositoryBase<TEntity, TContext, TId>(TContext contex
             throw new ArgumentNullException(nameof(entity.Id), "Entity SequentialId cannot be null.");
 
         return await DbSet.AsNoTracking()
-            .FirstOrDefaultAsync(e => e.Id != null && e.Id.Equals(entity.Id));
+            .FirstOrDefaultAsync(e => e.Id.Equals(entity.Id));
     }
 
     protected virtual async Task<TEntity?> ItemToGetAsync(TId id) =>
-        await DbSet.AsNoTracking().FirstOrDefaultAsync(e => e.Id != null && e.Id.Equals(id));
+        await DbSet.AsNoTracking().FirstOrDefaultAsync(e => e.Id.Equals(id));
 
     public async Task<string> GenerateReferenceAsync(Expression<Func<TEntity, string>> columnSelector,
         DateTime transactionDate, int serialLength = 4)
@@ -498,8 +499,8 @@ public abstract class DataRepositoryBase<TEntity, TContext, TId>(TContext contex
 }
 
 public abstract class DataRepository<TEntity, TId>(IDatabaseFactory databaseFactory)
-    : DataRepositoryBase<TEntity, TegWalletContext, TId>(databaseFactory.GetContext())
-    where TEntity : Entity<TId>
+    : DataRepositoryBase<TEntity, EduCareContext, TId>(databaseFactory.GetContext())
+    where TEntity : Entity<TId> where TId : notnull
 {
     protected IDatabaseFactory DatabaseFactory = databaseFactory;
 

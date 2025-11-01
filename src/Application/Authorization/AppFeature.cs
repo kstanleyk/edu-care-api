@@ -1,4 +1,4 @@
-﻿namespace TegWallet.Application.Authorization;
+﻿namespace EduCare.Application.Authorization;
 
 public static class AppFeature
 {

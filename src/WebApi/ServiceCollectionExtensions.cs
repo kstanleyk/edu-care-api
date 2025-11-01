@@ -1,18 +1,17 @@
+using System.Globalization;
+using System.Reflection;
 using Asp.Versioning;
+using EduCare.Application.Authorization;
+using EduCare.Application.Interfaces.Localization;
+using EduCare.CoreApi.Localization;
+using EduCare.CoreApi.Permissions;
+using EduCare.CoreApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Localization;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.IdentityModel.Tokens;
-using System.Globalization;
-using System.Reflection;
-using TegWallet.Application.Authorization;
-using TegWallet.Application.Interfaces.Localization;
-using TegWallet.WebApi.Localization;
-using TegWallet.WebApi.Permissions;
-using TegWallet.WebApi.Services;
 
-namespace TegWallet.WebApi;
+namespace EduCare.CoreApi;
 
 public static class ServiceCollectionExtensions
 {

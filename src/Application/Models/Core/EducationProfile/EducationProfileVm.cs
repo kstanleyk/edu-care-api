@@ -1,4 +1,4 @@
-﻿namespace TegWallet.Application.Models.Core.EducationProfile;
+﻿namespace EduCare.Application.Models.Core.EducationProfile;
 
 public class EducationProfileVm
 {

@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace TegWallet.WebApi.Services;
+namespace EduCare.CoreApi.Services;
 
 public class TokenInfoService(IHttpContextAccessor httpContextAccessor)
 {

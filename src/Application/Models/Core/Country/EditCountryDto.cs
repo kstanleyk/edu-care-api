@@ -1,4 +1,4 @@
-﻿namespace TegWallet.Application.Models.Core.Country;
+﻿namespace EduCare.Application.Models.Core.Country;
 
 public class EditCountryRequest
 {

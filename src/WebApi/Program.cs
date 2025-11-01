@@ -1,6 +1,6 @@
-using TegWallet.Application;
-using TegWallet.Infrastructure;
-using TegWallet.WebApi;
+using EduCare.Application;
+using EduCare.CoreApi;
+using EduCare.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 

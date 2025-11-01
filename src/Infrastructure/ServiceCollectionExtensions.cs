@@ -1,25 +1,25 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using EduCare.Application.Interfaces.Auth;
+using EduCare.Application.Interfaces.Core;
+using EduCare.Infrastructure.Persistence.Context;
+using EduCare.Infrastructure.Persistence.Repository;
+using EduCare.Infrastructure.Persistence.Repository.Auth;
+using EduCare.Infrastructure.Persistence.Repository.Core;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using TegWallet.Application.Interfaces.Auth;
-using TegWallet.Application.Interfaces.Core;
-using TegWallet.Infrastructure.Persistence.Context;
-using TegWallet.Infrastructure.Persistence.Repository;
-using TegWallet.Infrastructure.Persistence.Repository.Auth;
-using TegWallet.Infrastructure.Persistence.Repository.Core;
 
-namespace TegWallet.Infrastructure;
+namespace EduCare.Infrastructure;
 
 public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddInfrastructureDependencies(this IServiceCollection services, IConfiguration configuration)
     {
         // Entity Framework
-        services.AddDbContext<TegWalletContext>(options =>
+        services.AddDbContext<EduCareContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("Data"))
                 .UseSnakeCaseNamingConvention())
-            .AddTransient<TegWalletDatabaseSeeder>();
+            .AddTransient<EduCareDatabaseSeeder>();
 
         services.AddScoped<IDatabaseFactory, DatabaseFactory>();
 
@@ -27,10 +27,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IUserPermissionRepository, UserPermissionRepository>();
 
         //Core
-        services.AddScoped<IClientRepository, ClientRepository>();
-        services.AddScoped<IWalletRepository, WalletRepository>();
-        services.AddScoped<ILedgerRepository, LedgerRepository>();
-        services.AddScoped<IReservationRepository, ReservationRepository>();
+        services.AddScoped<IAcademicYearRepository, AcademicYearRepository>();
 
         return services;
     }
@@ -39,7 +36,7 @@ public static class ServiceCollectionExtensions
     {
         using var serviceScope = app.ApplicationServices.CreateScope();
 
-        var seeders = serviceScope.ServiceProvider.GetServices<TegWalletDatabaseSeeder>();
+        var seeders = serviceScope.ServiceProvider.GetServices<EduCareDatabaseSeeder>();
 
         foreach (var seeder in seeders) seeder.SeedDatabaseAsync().GetAwaiter().GetResult();
 

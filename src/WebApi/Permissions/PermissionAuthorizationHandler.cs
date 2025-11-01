@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using TegWallet.Application.Interfaces.Auth;
+﻿using EduCare.Application.Interfaces.Auth;
+using Microsoft.AspNetCore.Authorization;
 
-namespace TegWallet.WebApi.Permissions;
+namespace EduCare.CoreApi.Permissions;
 
 public class PermissionAuthorizationHandler(IUserPermissionRepository userPermissionRepository)
     : AuthorizationHandler<PermissionRequirement>

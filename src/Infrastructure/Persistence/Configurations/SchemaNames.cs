@@ -1,4 +1,4 @@
-﻿namespace TegWallet.Infrastructure.Persistence.Configurations;
+﻿namespace EduCare.Infrastructure.Persistence.Configurations;
 
 internal static class SchemaNames
 {

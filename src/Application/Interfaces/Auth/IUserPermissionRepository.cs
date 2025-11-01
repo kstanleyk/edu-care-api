@@ -1,4 +1,4 @@
-﻿namespace TegWallet.Application.Interfaces.Auth;
+﻿namespace EduCare.Application.Interfaces.Auth;
 
 public interface IUserPermissionRepository: IDisposable
 {

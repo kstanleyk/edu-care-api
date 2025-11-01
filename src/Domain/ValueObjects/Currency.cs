@@ -1,4 +1,4 @@
-﻿namespace TegWallet.Domain.ValueObjects;
+﻿namespace EduCare.Domain.ValueObjects;
 
 public record Currency
 {
@@ -16,20 +16,16 @@ public record Currency
         DecimalPlaces = decimalPlaces;
     }
 
-    public static readonly Currency USD = new("USD", "$", 2);
-    public static readonly Currency NGN = new("NGN", "₦", 2);
     public static readonly Currency XOF = new("XOF", "CFA", 2);
-    public static readonly Currency CNY = new("CNY", "¥", 2);
 
     public static Currency FromCode(string code)
     {
         return code.ToUpper() switch
         {
-            "USD" => USD,
-            "NGN" => NGN,
             "XOF" => XOF,
-            "CNY" => CNY,
             _ => throw new ArgumentException($"Unsupported currency code: {code}")
         };
     }
+
+    public static IReadOnlyList<Currency> All => [XOF];
 }

@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using TegWallet.Application.Authorization;
+﻿using EduCare.Application.Authorization;
+using Microsoft.AspNetCore.Authorization;
 
-namespace TegWallet.WebApi.Attributes
+namespace EduCare.CoreApi.Attributes
 {
     public class MustHavePermissionAttribute : AuthorizeAttribute
     {

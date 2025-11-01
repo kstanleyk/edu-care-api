@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using EduCare.Application.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
-using TegWallet.Application.Authorization;
 
-namespace TegWallet.WebApi.Permissions;
+namespace EduCare.CoreApi.Permissions;
 
 public class PermissionPolicyProvider : IAuthorizationPolicyProvider
 {

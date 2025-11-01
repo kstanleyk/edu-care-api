@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 
-namespace TegWallet.WebApi.Permissions;
+namespace EduCare.CoreApi.Permissions;
 
 public class PermissionRequirement(string permission) : IAuthorizationRequirement
 {

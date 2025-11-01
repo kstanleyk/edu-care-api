@@ -1,11 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
-using TegWallet.Application.Helpers;
-using TegWallet.Application.Interfaces.Auth;
-using TegWallet.Infrastructure.Persistence.Context;
+﻿using EduCare.Application.Helpers;
+using EduCare.Application.Interfaces.Auth;
+using EduCare.Infrastructure.Persistence.Context;
+using Microsoft.EntityFrameworkCore;
 
-namespace TegWallet.Infrastructure.Persistence.Repository.Auth;
+namespace EduCare.Infrastructure.Persistence.Repository.Auth;
 
-public class UserPermissionRepository(TegWalletContext context) :Disposable, IUserPermissionRepository
+public class UserPermissionRepository(EduCareContext context) :Disposable, IUserPermissionRepository
 {
     public async Task<HashSet<string>> GetPermissionsForUserAsync(string userId)
     {

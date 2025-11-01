@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace TegWallet.Domain.Entity;
+namespace EduCare.Domain.Entity;
 
 public static class Extensions
 {

@@ -1,35 +1,26 @@
-﻿namespace TegWallet.Domain.ValueObjects;
+﻿using EduCare.Domain.Entity;
 
-public record Money
+namespace EduCare.Domain.ValueObjects;
+
+public class Money : ValueObject
 {
-    public decimal Amount { get; init; }
-    public Currency Currency { get; init; } = null!;
+    public decimal Amount { get; }
+    public string Currency { get; }
 
-    // EF Core requires a parameterless constructor
-    protected Money()
-    {
-        Amount = 0;
-        // Currency will be set by EF Core
-    }
+    private Money() { }
 
-    public Money(decimal amount, Currency currency)
+    public Money(decimal amount, string currency = "XAF")
     {
-        if (amount < 0) throw new ArgumentException("Money amount cannot be negative");
+        DomainGuards.AgainstNegative(amount, nameof(amount));
+        DomainGuards.AgainstNullOrWhiteSpace(currency, nameof(currency));
+
         Amount = amount;
-        Currency = currency ?? throw new ArgumentNullException(nameof(currency));
+        Currency = currency;
     }
 
-    public static Money operator +(Money a, Money b)
+    protected override IEnumerable<object> GetEqualityComponents()
     {
-        if (a.Currency != b.Currency)
-            throw new InvalidOperationException("Cannot add different currencies");
-        return new Money(a.Amount + b.Amount, a.Currency);
-    }
-
-    public static Money operator -(Money a, Money b)
-    {
-        if (a.Currency != b.Currency)
-            throw new InvalidOperationException("Cannot subtract different currencies");
-        return new Money(a.Amount - b.Amount, a.Currency);
+        yield return Amount;
+        yield return Currency;
     }
 }

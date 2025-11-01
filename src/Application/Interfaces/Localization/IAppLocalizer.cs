@@ -1,4 +1,4 @@
-﻿namespace TegWallet.Application.Interfaces.Localization;
+﻿namespace EduCare.Application.Interfaces.Localization;
 
 public interface IAppLocalizer
 {

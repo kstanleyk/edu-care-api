@@ -1,4 +1,4 @@
-﻿namespace TegWallet.Application.Models;
+﻿namespace EduCare.Application.Models;
 
 public class CurrentUserVm
 {

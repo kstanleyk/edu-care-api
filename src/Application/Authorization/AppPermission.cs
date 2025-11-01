@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 
-namespace TegWallet.Application.Authorization;
+namespace EduCare.Application.Authorization;
 
 public class AppPermission(string feature, string action, string group, string description, bool isBasic = false)
 {

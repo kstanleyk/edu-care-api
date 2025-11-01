@@ -1,6 +1,8 @@
-﻿namespace TegWallet.Domain.Abstractions;
+﻿namespace EduCare.Domain.Abstractions;
 
-public abstract class Aggregate<TId> : Entity<TId>
+
+// Base Aggregate Root
+public abstract class Aggregate<TId> : Entity<TId> where TId : notnull
 {
-
+    protected Aggregate() { }
 }
