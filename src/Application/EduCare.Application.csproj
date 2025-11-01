@@ -17,7 +17,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Core\" />
+    <Folder Include="Features\Core\AcademicYearManagement\Dtos\" />
+    <Folder Include="Features\Core\AcademicYearManagement\Queries\" />
+    <Folder Include="Features\Core\BursaryManagement\Queries\" />
+    <Folder Include="Features\Core\EnrollmentManagement\Queries\" />
+    <Folder Include="Features\Core\PaymentManagement\Dtos\" />
+    <Folder Include="Features\Core\ScholarshipManagement\Dtos\" />
+    <Folder Include="Features\Core\ScholarshipManagement\Queries\" />
+    <Folder Include="Features\Core\SchoolManagement\Dtos\" />
+    <Folder Include="Features\Core\SchoolManagement\Queries\" />
+    <Folder Include="Features\Core\StudentManagement\Dtos\" />
   </ItemGroup>
 
 </Project>
