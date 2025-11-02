@@ -5,24 +5,28 @@ public class Result<T>
     public bool IsSuccess { get; }
     public bool IsFailure => !IsSuccess;
     public T Value { get; }
+    public string Message { get; }
     public Error Error { get; }
 
-    private Result(T value)
+    private Result(T value, string message)
     {
         IsSuccess = true;
         Value = value;
+        Message = message;
         Error = Error.None;
     }
 
-    private Result(Error error)
+    private Result(Error error, string message)
     {
         IsSuccess = false;
         Value = default!;
         Error = error;
+        Message = message;
     }
 
-    public static Result<T> Succeeded(T value) => new Result<T>(value);
-    public static Result<T> Failed(Error error) => new Result<T>(error);
+    public static Result<T> Succeeded(T value, string message = "") => new Result<T>(value, message);
+    public static Result<T> Failed(Error error) => new Result<T>(error, error.Description);
+    public static Result<T> Failed(Error error, string message) => new Result<T>(error, message);
 }
 
 public record Error
