@@ -19,10 +19,3 @@ public record StudentDebtorDto
     public string? PrimaryParentPhone { get; init; }
     public string? PrimaryParentEmail { get; init; }
 }
-
-public record DailyCollectionDto
-{
-    public DateOnly Date { get; init; }
-    public Money Amount { get; init; } = null!;
-    public int PaymentCount { get; init; }
-}
