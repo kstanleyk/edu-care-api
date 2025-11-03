@@ -19,7 +19,7 @@ public class GetEnrollmentPaymentsQueryHandler(
         try
         {
             // Validate enrollment exists
-            var enrollment = await enrollmentRepository.GetAsync(query.EnrollmentId);
+            var enrollment = await enrollmentRepository.GetByIdAsync(query.EnrollmentId);
             if (enrollment is null)
             {
                 return Result<List<PaymentDto>>.Failed(

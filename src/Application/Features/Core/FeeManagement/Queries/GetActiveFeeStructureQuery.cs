@@ -18,7 +18,7 @@ public class GetActiveFeeStructureQueryHandler(
         try
         {
             // Validate class exists
-            var classEntity = await classRepository.GetAsync(query.ClassId);
+            var classEntity = await classRepository.GetByIdAsync(query.ClassId);
             if (classEntity is null)
             {
                 return Result<FeeStructureDto?>.Failed(

@@ -402,7 +402,7 @@ public abstract class DataRepositoryBase<TEntity, TContext, TId>(TContext contex
 
     public virtual async Task<TEntity?> GetAsync(TEntity entity) => await ItemToGetAsync(entity);
 
-    public virtual async Task<TEntity?> GetAsync(TId id) => await ItemToGetAsync(id);
+    public virtual async Task<TEntity?> GetByIdAsync(TId id) => await ItemToGetAsync(id);
 
     public virtual async Task<TEntity?> GetAsync(Expression<Func<TEntity, bool>> where) =>
         await DbSet.Where(where).FirstOrDefaultAsync();

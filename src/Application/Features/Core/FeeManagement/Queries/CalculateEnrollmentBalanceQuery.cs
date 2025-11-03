@@ -44,8 +44,8 @@ public class CalculateEnrollmentBalanceQueryHandler(
             }
 
             // Get additional context for validation
-            var student = await studentRepository.GetAsync(enrollment.StudentId);
-            var classEntity = await classRepository.GetAsync(enrollment.ClassId);
+            var student = await studentRepository.GetByIdAsync(enrollment.StudentId);
+            var classEntity = await classRepository.GetByIdAsync(enrollment.ClassId);
 
             if (student is null || classEntity is null)
             {

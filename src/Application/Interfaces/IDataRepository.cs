@@ -10,7 +10,7 @@ public interface IRepository<TEntity, TId> : IDisposable, IRepository
     where TEntity : Entity<TId>
 {
     Task<TEntity?> GetAsync(TEntity entity);
-    Task<TEntity?> GetAsync(TId id);
+    Task<TEntity?> GetByIdAsync(TId id);
     Task<TEntity?> GetAsync(Expression<Func<TEntity, bool>> where);
     Task<TEntity[]> GetAllAsync();
     Task<int> GetCountAsync();

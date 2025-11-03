@@ -17,7 +17,7 @@ public class GetSchoolQueryHandler(
         try
         {
             // Get school by ID
-            var school = await schoolRepository.GetAsync(query.Id);
+            var school = await schoolRepository.GetByIdAsync(query.Id);
             if (school is null)
             {
                 return Result<SchoolDto>.Failed(

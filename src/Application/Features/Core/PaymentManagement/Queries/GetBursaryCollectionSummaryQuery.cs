@@ -20,7 +20,7 @@ public class GetBursaryCollectionSummaryQueryHandler(
         try
         {
             // Validate bursary exists
-            var bursary = await bursaryRepository.GetAsync(query.BursaryId);
+            var bursary = await bursaryRepository.GetByIdAsync(query.BursaryId);
             if (bursary is null)
             {
                 return Result<CollectionSummaryDto>.Failed(

@@ -6,14 +6,6 @@ using MediatR;
 
 namespace EduCare.Application.Features.Core.AcademicYearManagement.Commands;
 
-//public record CreateAcademicYearCommand(
-//    string Name,
-//    string Code,
-//    DateOnly StartDate,
-//    DateOnly EndDate,
-//    Guid SchoolId,
-//    bool IsCurrent = false) : IRequest<Guid>;
-
 public record CreateAcademicYearCommand(
     string Name,
     string Code,
@@ -27,7 +19,8 @@ public class CreateAcademicYearCommandHandler(
     ISchoolRepository schoolRepository)
     : IRequestHandler<CreateAcademicYearCommand, Result<AcademicYearDto>>
 {
-    public async Task<Result<AcademicYearDto>> Handle(CreateAcademicYearCommand command, CancellationToken cancellationToken)
+    public async Task<Result<AcademicYearDto>> Handle(CreateAcademicYearCommand command,
+        CancellationToken cancellationToken)
     {
         try
         {
@@ -47,7 +40,7 @@ public class CreateAcademicYearCommandHandler(
             }
 
             // Validate school exists
-            var school = await schoolRepository.GetAsync(command.SchoolId);
+            var school = await schoolRepository.GetByIdAsync(command.SchoolId);
             if (school is null)
             {
                 return Result<AcademicYearDto>.Failed(
@@ -58,8 +51,12 @@ public class CreateAcademicYearCommandHandler(
                 );
             }
 
+            // Create academic year using domain factory method
+            var academicYear = AcademicYear.Create(command.Name, command.Code, command.StartDate, command.EndDate,
+                command.SchoolId, command.IsCurrent);
+
             // Call repository with transaction support
-            var repositoryResult = await academicYearRepository.CreateAcademicYearAsync(command);
+            var repositoryResult = await academicYearRepository.CreateAcademicYearAsync(academicYear);
 
             if (repositoryResult.Status != RepositoryActionStatus.Created)
             {
