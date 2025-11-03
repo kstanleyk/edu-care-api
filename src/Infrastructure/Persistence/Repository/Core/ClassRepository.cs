@@ -1,5 +1,4 @@
-﻿using EduCare.Application.Features.Core.AcademicYearManagement.Commands;
-using EduCare.Application.Helpers;
+﻿using EduCare.Application.Helpers;
 using EduCare.Application.Interfaces.Core;
 using EduCare.Domain.Entity.Core;
 using Microsoft.EntityFrameworkCore;

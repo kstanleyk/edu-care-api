@@ -19,7 +19,8 @@ public class Class : Aggregate<Guid>
     /// <param name="gradeLevel">Grade level</param>
     /// <param name="academicYearId">Parent academic year ID</param>
     /// <param name="createdOn">Creation timestamp</param>
-    public static Class Create(string name, string code, int gradeLevel, Guid academicYearId, DateTime? createdOn = null)
+    public static Class Create(string name, string code, int gradeLevel, Guid academicYearId,
+        DateTime? createdOn = null)
     {
         DomainGuards.AgainstNullOrWhiteSpace(name, nameof(name));
         DomainGuards.AgainstNullOrWhiteSpace(code, nameof(code));

@@ -21,7 +21,16 @@ public class FeeStructureRepository(IDatabaseFactory databaseFactory)
             .FirstOrDefaultAsync();
     }
 
-    public async Task<FeeStructure?> GetByIdAsync(Guid id)
+    public async Task<FeeStructure?> GetByIdWithFeeItemsAsync(Guid id)
+    {
+        return await DbSet
+            .Include(fs => fs.FeeItems)
+                .ThenInclude(fsi => fsi.FeeItem)
+            .Include(fs => fs.Class)
+            .FirstOrDefaultAsync(fs => fs.Id == id);
+    }
+
+    public override async Task<FeeStructure?> GetByIdAsync(Guid id)
     {
         return await DbSet
             .Include(fs => fs.FeeItems)
