@@ -11,5 +11,8 @@ public interface IAcademicYearRepository : IRepository<AcademicYear, Guid>
     Task<List<AcademicYear>> GetBySchoolIdAsync(Guid schoolId);
     Task<AcademicYear?> GetByCodeAndSchoolIdAsync(string code, Guid schoolId);
     Task ClearCurrentAcademicYearFlagAsync(Guid schoolId, Guid excludeAcademicYearId);
-    Task<RepositoryActionResult<AcademicYear>> CreateAcademicYearAsync(CreateAcademicYearCommand command);
+    Task<RepositoryActionResult<AcademicYear>> CreateAcademicYearAsync(AcademicYear academicYear);
+    Task<AcademicYear?> GetByIdWithClassesAsync(Guid id);
+    Task<RepositoryActionResult<AcademicYear>> MarkAsCurrentAsync(Guid academicYearId);
+    Task<RepositoryActionResult<AcademicYear>> UpdateAcademicYearAsync(UpdateAcademicYearParameters parameters);
 }

@@ -1,5 +1,4 @@
-﻿
-using EduCare.Application.Features.Core.AcademicYearManagement.Commands;
+﻿using EduCare.Application.Features.Core.AcademicYearManagement.Commands;
 using EduCare.Application.Helpers;
 using EduCare.Application.Interfaces.Core;
 using EduCare.Domain.Entity.Core;
@@ -36,41 +35,134 @@ public class AcademicYearRepository(IDatabaseFactory databaseFactory)
                     .SetProperty(ay => ay.ModifiedOn, DateTime.UtcNow));
     }
 
+    public async Task<RepositoryActionResult<AcademicYear>> UpdateAcademicYearAsync(UpdateAcademicYearParameters parameters)
+    {
+        await using var tx = await Context.Database.BeginTransactionAsync();
+        try
+        {
+            // Get the academic year
+            var academicYear = await GetByIdWithClassesAsync(parameters.Id);
+            if (academicYear is null)
+            {
+                await tx.RollbackAsync();
+                return new RepositoryActionResult<AcademicYear>(null, RepositoryActionStatus.NotFound);
+            }
+
+            // Update the academic year using domain method
+            academicYear.Update(parameters.Name, parameters.StartDate, parameters.EndDate, parameters.IsCurrent);
+
+            // If this is being marked as current, clear current flag from other academic years in the same school
+            if (parameters.IsCurrent)
+            {
+                await ClearCurrentAcademicYearFlagAsync(academicYear.SchoolId, academicYear.Id);
+            }
+
+            var result = await SaveChangesAsync();
+            if (result > 0)
+            {
+                await tx.CommitAsync();
+                return new RepositoryActionResult<AcademicYear>(academicYear, RepositoryActionStatus.Updated);
+            }
+
+            await tx.RollbackAsync();
+            return new RepositoryActionResult<AcademicYear>(null, RepositoryActionStatus.NothingModified);
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            await tx.RollbackAsync();
+            return new RepositoryActionResult<AcademicYear>(null, RepositoryActionStatus.ConcurrencyConflict, ex);
+        }
+        catch (DbUpdateException ex)
+        {
+            await tx.RollbackAsync();
+            return new RepositoryActionResult<AcademicYear>(null, RepositoryActionStatus.Error, ex);
+        }
+        catch (Exception ex)
+        {
+            await tx.RollbackAsync();
+            return new RepositoryActionResult<AcademicYear>(null, RepositoryActionStatus.Error, ex);
+        }
+    }
+
     public async Task<AcademicYear?> GetByIdAsync(Guid id)
     {
         return await DbSet
             .FirstOrDefaultAsync(ay => ay.Id == id);
     }
 
-    public async Task<RepositoryActionResult<AcademicYear>> CreateAcademicYearAsync(CreateAcademicYearCommand command)
+    public async Task<AcademicYear?> GetByIdWithClassesAsync(Guid id)
+    {
+        return await DbSet
+            .Include(ay => ay.Classes)
+            .FirstOrDefaultAsync(ay => ay.Id == id);
+    }
+
+    public async Task<RepositoryActionResult<AcademicYear>> MarkAsCurrentAsync(Guid academicYearId)
+    {
+        await using var tx = await Context.Database.BeginTransactionAsync();
+        try
+        {
+            // Get the academic year
+            var academicYear = await GetByIdAsync(academicYearId);
+            if (academicYear is null)
+            {
+                await tx.RollbackAsync();
+                return new RepositoryActionResult<AcademicYear>(null, RepositoryActionStatus.NotFound);
+            }
+
+            // Clear current flag from other academic years in the same school
+            await ClearCurrentAcademicYearFlagAsync(academicYear.SchoolId, academicYearId);
+
+            // Mark this academic year as current using domain method
+            academicYear.MarkAsCurrent();
+
+            var result = await SaveChangesAsync();
+            if (result > 0)
+            {
+                await tx.CommitAsync();
+                return new RepositoryActionResult<AcademicYear>(academicYear, RepositoryActionStatus.Updated);
+            }
+
+            await tx.RollbackAsync();
+            return new RepositoryActionResult<AcademicYear>(null, RepositoryActionStatus.NothingModified);
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            await tx.RollbackAsync();
+            return new RepositoryActionResult<AcademicYear>(null, RepositoryActionStatus.ConcurrencyConflict, ex);
+        }
+        catch (DbUpdateException ex)
+        {
+            await tx.RollbackAsync();
+            return new RepositoryActionResult<AcademicYear>(null, RepositoryActionStatus.Error, ex);
+        }
+        catch (Exception ex)
+        {
+            await tx.RollbackAsync();
+            return new RepositoryActionResult<AcademicYear>(null, RepositoryActionStatus.Error, ex);
+        }
+    }
+
+    public async Task<RepositoryActionResult<AcademicYear>> CreateAcademicYearAsync(AcademicYear academicYear)
     {
         await using var tx = await Context.Database.BeginTransactionAsync();
         try
         {
             // Check for duplicate academic year code in the same school
-            var existingAcademicYear = await GetByCodeAndSchoolIdAsync(command.Code, command.SchoolId);
+            var existingAcademicYear = await GetByCodeAndSchoolIdAsync(academicYear.Code, academicYear.SchoolId);
             if (existingAcademicYear is not null)
             {
                 await tx.RollbackAsync();
                 return new RepositoryActionResult<AcademicYear>(null, RepositoryActionStatus.Invalid);
             }
 
-            // Create academic year using domain factory method
-            var academicYear = AcademicYear.Create(
-                command.Name,
-                command.Code,
-                command.StartDate,
-                command.EndDate,
-                command.SchoolId,
-                command.IsCurrent);
-
             // Add to context
             await Context.AcademicYears.AddAsync(academicYear);
 
             // If this is marked as current, update other academic years in the same school
-            if (command.IsCurrent)
+            if (academicYear.IsCurrent)
             {
-                await ClearCurrentAcademicYearFlagAsync(command.SchoolId, academicYear.Id);
+                await ClearCurrentAcademicYearFlagAsync(academicYear.SchoolId, academicYear.Id);
             }
 
             var result = await SaveChangesAsync();

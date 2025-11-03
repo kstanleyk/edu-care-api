@@ -18,7 +18,7 @@ public class GetCurrentAcademicYearQueryHandler(
         try
         {
             // Validate school exists
-            var school = await schoolRepository.GetAsync(query.SchoolId);
+            var school = await schoolRepository.GetByIdAsync(query.SchoolId);
             if (school is null)
             {
                 return Result<AcademicYearDto?>.Failed(
