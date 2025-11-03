@@ -16,4 +16,7 @@ public interface IEnrollmentRepository : IRepository<Enrollment, Guid>
     Task<Enrollment?> GetActiveEnrollmentByStudentAndAcademicYearAsync(Guid studentId, Guid academicYearId);
     Task<RepositoryActionResult<Enrollment>> MarkEnrollmentInactiveAsync(MarkEnrollmentInactiveParameters parameters);
     Task<RepositoryActionResult<Enrollment>> PromoteStudentAsync(PromoteStudentCommandHandler.PromoteStudentParameters parameters);
+    Task<RepositoryActionResult<Enrollment>> RemoveOptionalFeeAsync(RemoveOptionalFeeParameters parameters);
+    Task<RepositoryActionResult<Enrollment>> TransferStudentAsync(TransferStudentParameters parameters);
+    Task<Enrollment?> GetActiveEnrollmentByStudentAndClassAsync(Guid studentId, Guid classId);
 }

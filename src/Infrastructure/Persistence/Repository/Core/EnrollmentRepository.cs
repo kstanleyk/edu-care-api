@@ -366,6 +366,175 @@ public class EnrollmentRepository(IStudentRepository studentRepository, IClassRe
         }
     }
 
+    public async Task<RepositoryActionResult<Enrollment>> RemoveOptionalFeeAsync(RemoveOptionalFeeParameters parameters)
+    {
+        await using var tx = await Context.Database.BeginTransactionAsync();
+        try
+        {
+            // Get the enrollment with all related data including selected optional fees
+            var enrollment = await DbSet
+                .Include(e => e.SelectedOptionalFees)
+                .Include(e => e.Payments)
+                .FirstOrDefaultAsync(e => e.Id == parameters.EnrollmentId);
+
+            if (enrollment is null)
+            {
+                await tx.RollbackAsync();
+                return new RepositoryActionResult<Enrollment>(null, RepositoryActionStatus.NotFound);
+            }
+
+            // Check if enrollment is active
+            if (!enrollment.IsActive)
+            {
+                await tx.RollbackAsync();
+                return new RepositoryActionResult<Enrollment>(null, RepositoryActionStatus.Invalid);
+            }
+
+            // Check if the fee item exists in the selected optional fees
+            var selectedFee = enrollment.SelectedOptionalFees
+                .FirstOrDefault(sf => sf.FeeItemId == parameters.FeeItemId);
+
+            if (selectedFee is null)
+            {
+                await tx.RollbackAsync();
+                return new RepositoryActionResult<Enrollment>(null, RepositoryActionStatus.Invalid);
+            }
+
+            // Check if payments have already been made (business rule)
+            if (enrollment.Payments.Any())
+            {
+                await tx.RollbackAsync();
+                return new RepositoryActionResult<Enrollment>(null, RepositoryActionStatus.Invalid);
+            }
+
+            // Remove the optional fee using domain method
+            enrollment.RemoveOptionalFee(parameters.FeeItemId);
+
+            var result = await SaveChangesAsync();
+            if (result > 0)
+            {
+                await tx.CommitAsync();
+                return new RepositoryActionResult<Enrollment>(enrollment, RepositoryActionStatus.Updated);
+            }
+
+            await tx.RollbackAsync();
+            return new RepositoryActionResult<Enrollment>(null, RepositoryActionStatus.NothingModified);
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            await tx.RollbackAsync();
+            return new RepositoryActionResult<Enrollment>(null, RepositoryActionStatus.ConcurrencyConflict, ex);
+        }
+        catch (DbUpdateException ex)
+        {
+            await tx.RollbackAsync();
+            return new RepositoryActionResult<Enrollment>(null, RepositoryActionStatus.Error, ex);
+        }
+        catch (Exception ex)
+        {
+            await tx.RollbackAsync();
+            return new RepositoryActionResult<Enrollment>(null, RepositoryActionStatus.Error, ex);
+        }
+    }
+
+    public async Task<RepositoryActionResult<Enrollment>> TransferStudentAsync(TransferStudentParameters parameters)
+    {
+        await using var tx = await Context.Database.BeginTransactionAsync();
+        try
+        {
+            // Get the current enrollment with all details
+            var currentEnrollment = await GetByIdWithDetailsAsync(parameters.EnrollmentId);
+            if (currentEnrollment is null || !currentEnrollment.IsActive)
+            {
+                await tx.RollbackAsync();
+                return new RepositoryActionResult<Enrollment>(null, RepositoryActionStatus.NotFound);
+            }
+
+            // Check if student is already enrolled in the new class
+            var existingEnrollment = await GetActiveEnrollmentByStudentAndClassAsync(
+                currentEnrollment.StudentId, parameters.NewClassId);
+
+            if (existingEnrollment is not null)
+            {
+                await tx.RollbackAsync();
+                return new RepositoryActionResult<Enrollment>(null, RepositoryActionStatus.Invalid);
+            }
+
+            // Validate related entities exist
+            var newClass = await classRepository.GetByIdAsync(parameters.NewClassId);
+
+            var newFeeStructure = await feeStructureRepository.GetByIdAsync(parameters.NewFeeStructureId);
+
+            if (newClass is null || newFeeStructure is null)
+            {
+                await tx.RollbackAsync();
+                return new RepositoryActionResult<Enrollment>(null, RepositoryActionStatus.NotFound);
+            }
+
+            // Validate new class belongs to the same academic year
+            if (newClass.AcademicYearId != currentEnrollment.AcademicYearId)
+            {
+                await tx.RollbackAsync();
+                return new RepositoryActionResult<Enrollment>(null, RepositoryActionStatus.Invalid);
+            }
+
+            // Validate new fee structure belongs to new class
+            if (newFeeStructure.ClassId != parameters.NewClassId)
+            {
+                await tx.RollbackAsync();
+                return new RepositoryActionResult<Enrollment>(null, RepositoryActionStatus.Invalid);
+            }
+
+            // Check if there are any outstanding payments
+            var currentBalance = currentEnrollment.CalculateBalance();
+            if (currentBalance.Amount > 0)
+            {
+                await tx.RollbackAsync();
+                return new RepositoryActionResult<Enrollment>(null, RepositoryActionStatus.Invalid);
+            }
+
+            // Update the enrollment with new class and fee structure
+            // Note: We're updating the existing enrollment rather than creating a new one
+            // since this is a transfer within the same academic year
+            currentEnrollment.UpdateClassAndFeeStructure(parameters.NewClassId, parameters.NewFeeStructureId);
+
+            var result = await SaveChangesAsync();
+            if (result > 0)
+            {
+                await tx.CommitAsync();
+                return new RepositoryActionResult<Enrollment>(currentEnrollment, RepositoryActionStatus.Updated);
+            }
+
+            await tx.RollbackAsync();
+            return new RepositoryActionResult<Enrollment>(null, RepositoryActionStatus.NothingModified);
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            await tx.RollbackAsync();
+            return new RepositoryActionResult<Enrollment>(null, RepositoryActionStatus.ConcurrencyConflict, ex);
+        }
+        catch (DbUpdateException ex)
+        {
+            await tx.RollbackAsync();
+            return new RepositoryActionResult<Enrollment>(null, RepositoryActionStatus.Error, ex);
+        }
+        catch (Exception ex)
+        {
+            await tx.RollbackAsync();
+            return new RepositoryActionResult<Enrollment>(null, RepositoryActionStatus.Error, ex);
+        }
+    }
+
+    public async Task<Enrollment?> GetActiveEnrollmentByStudentAndClassAsync(Guid studentId, Guid classId)
+    {
+        return await DbSet
+            .Include(e => e.Class)
+            .Include(e => e.Student)
+            .FirstOrDefaultAsync(e => e.StudentId == studentId &&
+                                     e.ClassId == classId &&
+                                     e.IsActive);
+    }
+
     public async Task<Enrollment?> GetActiveEnrollmentAsync(Guid studentId, Guid academicYearId)
     {
         return await DbSet

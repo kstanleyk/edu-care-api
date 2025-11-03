@@ -59,6 +59,21 @@ public class Enrollment : Aggregate<Guid>
         ModifiedOn = DateTime.UtcNow;
     }
 
+    /// <summary>
+    /// Transfers the student to a different class within the same academic year
+    /// </summary>
+    /// <param name="newClassId">The new class ID</param>
+    /// <param name="newFeeStructureId">The new fee structure ID</param>
+    public void UpdateClassAndFeeStructure(Guid newClassId, Guid newFeeStructureId)
+    {
+        DomainGuards.AgainstDefault(newClassId, nameof(newClassId));
+        DomainGuards.AgainstDefault(newFeeStructureId, nameof(newFeeStructureId));
+
+        ClassId = newClassId;
+        FeeStructureId = newFeeStructureId;
+        ModifiedOn = DateTime.UtcNow;
+    }
+
     public void AddScholarship(Scholarship scholarship)
     {
         DomainGuards.AgainstNull(scholarship, nameof(scholarship));
