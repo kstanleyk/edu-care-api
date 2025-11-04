@@ -1,11 +1,12 @@
-﻿using System.Data;
-using System.Globalization;
-using System.Linq.Expressions;
-using EduCare.Application.Helpers;
+﻿using EduCare.Application.Helpers;
 using EduCare.Application.Interfaces;
 using EduCare.Domain.Abstractions;
 using EduCare.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
+using System.Data;
+using System.Globalization;
+using System.Linq.Expressions;
 
 namespace EduCare.Infrastructure.Persistence.Repository;
 
@@ -439,6 +440,12 @@ public abstract class DataRepositoryBase<TEntity, TContext, TId>(TContext contex
 
     protected virtual async Task<TEntity?> ItemToGetAsync(TId id) =>
         await DbSet.AsNoTracking().FirstOrDefaultAsync(e => e.Id.Equals(id));
+
+    protected virtual bool IsUniqueConstraintViolation(DbUpdateException ex)
+    {
+        return ex.InnerException is PostgresException postgresException &&
+               postgresException.SqlState == "23505"; // PostgreSQL unique constraint violation
+    }
 
     public async Task<string> GenerateReferenceAsync(Expression<Func<TEntity, string>> columnSelector,
         DateTime transactionDate, int serialLength = 4)

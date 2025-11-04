@@ -92,6 +92,61 @@ public class OrganizationRepository(ISchoolRepository schoolRepository,  IDataba
         }
     }
 
+    public async Task<RepositoryActionResult<Organization>> CreateOrganizationAsync(CreateOrganizationParameters parameters)
+    {
+        await using var tx = await Context.Database.BeginTransactionAsync();
+        try
+        {
+            // Check if organization with same code already exists
+            var existingOrganization = await GetByCodeAsync(parameters.Code);
+            if (existingOrganization is not null)
+            {
+                await tx.RollbackAsync();
+                return new RepositoryActionResult<Organization>(null, RepositoryActionStatus.Conflict);
+            }
+
+            // Create organization using domain factory method
+            var organization = Organization.Create(
+                parameters.Name,
+                parameters.Code,
+                parameters.Address);
+
+            // Add to context
+            await DbSet.AddAsync(organization);
+            var result = await SaveChangesAsync();
+
+            if (result > 0)
+            {
+                await tx.CommitAsync();
+                return new RepositoryActionResult<Organization>(organization, RepositoryActionStatus.Created);
+            }
+
+            await tx.RollbackAsync();
+            return new RepositoryActionResult<Organization>(null, RepositoryActionStatus.NothingModified);
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            await tx.RollbackAsync();
+            return new RepositoryActionResult<Organization>(null, RepositoryActionStatus.ConcurrencyConflict, ex);
+        }
+        catch (DbUpdateException ex)
+        {
+            await tx.RollbackAsync();
+
+            // Handle unique constraint violations for PostgreSQL
+            if (IsUniqueConstraintViolation(ex))
+            {
+                return new RepositoryActionResult<Organization>(null, RepositoryActionStatus.Conflict, ex);
+            }
+            return new RepositoryActionResult<Organization>(null, RepositoryActionStatus.Error, ex);
+        }
+        catch (Exception ex)
+        {
+            await tx.RollbackAsync();
+            return new RepositoryActionResult<Organization>(null, RepositoryActionStatus.Error, ex);
+        }
+    }
+
     public async Task<Organization?> GetByCodeAsync(string code)
     {
         return await DbSet
