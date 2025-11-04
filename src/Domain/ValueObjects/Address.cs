@@ -27,6 +27,23 @@ public class Address : ValueObject
         ZipCode = zipCode;
     }
 
+    /// <summary>
+    /// Compares two Address objects for equality
+    /// </summary>
+    public static bool AddressEquals(Address? address1, Address? address2)
+    {
+        if (address1 is null && address2 is null)
+            return true;
+        if (address1 is null || address2 is null)
+            return false;
+
+        return address1.Street == address2.Street &&
+               address1.City == address2.City &&
+               address1.State == address2.State &&
+               address1.Country == address2.Country &&
+               address1.ZipCode == address2.ZipCode;
+    }
+
     protected override IEnumerable<object> GetEqualityComponents()
     {
         yield return Street;

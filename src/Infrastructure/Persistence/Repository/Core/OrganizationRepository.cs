@@ -92,6 +92,58 @@ public class OrganizationRepository(ISchoolRepository schoolRepository,  IDataba
         }
     }
 
+    public async Task<RepositoryActionResult<Organization>> UpdateOrganizationAsync(UpdateOrganizationParameters parameters)
+    {
+        await using var tx = await Context.Database.BeginTransactionAsync();
+        try
+        {
+            // Get the existing organization with schools
+            var organization = await GetByIdWithSchoolsAsync(parameters.Id);
+            if (organization is null)
+            {
+                await tx.RollbackAsync();
+                return new RepositoryActionResult<Organization>(null, RepositoryActionStatus.NotFound);
+            }
+
+            // Check if there are any actual changes
+            if (organization.Name == parameters.Name &&
+                AddressEquals(organization.Address, parameters.Address))
+            {
+                await tx.RollbackAsync();
+                return new RepositoryActionResult<Organization>(null, RepositoryActionStatus.NothingModified);
+            }
+
+            // Update organization using domain method
+            organization.Update(parameters.Name, parameters.Address);
+
+            var result = await SaveChangesAsync();
+            if (result > 0)
+            {
+                await tx.CommitAsync();
+                return new RepositoryActionResult<Organization>(organization, RepositoryActionStatus.Updated);
+            }
+
+            await tx.RollbackAsync();
+            return new RepositoryActionResult<Organization>(null, RepositoryActionStatus.NothingModified);
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            await tx.RollbackAsync();
+            return new RepositoryActionResult<Organization>(null, RepositoryActionStatus.ConcurrencyConflict, ex);
+        }
+        catch (DbUpdateException ex)
+        {
+            await tx.RollbackAsync();
+            return new RepositoryActionResult<Organization>(null, RepositoryActionStatus.Error, ex);
+        }
+        catch (Exception ex)
+        {
+            await tx.RollbackAsync();
+            return new RepositoryActionResult<Organization>(null, RepositoryActionStatus.Error, ex);
+        }
+    }
+
+
     public async Task<RepositoryActionResult<Organization>> CreateOrganizationAsync(CreateOrganizationParameters parameters)
     {
         await using var tx = await Context.Database.BeginTransactionAsync();

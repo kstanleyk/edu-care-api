@@ -11,4 +11,5 @@ public interface IOrganizationRepository : IRepository<Organization, Guid>
     Task<Organization?> GetByIdWithSchoolsAsync(Guid id);
     Task<RepositoryActionResult<Organization>> AddSchoolToOrganizationAsync(AddSchoolToOrganizationParameters parameters);
     Task<RepositoryActionResult<Organization>> CreateOrganizationAsync(CreateOrganizationParameters parameters);
+    Task<RepositoryActionResult<Organization>> UpdateOrganizationAsync(UpdateOrganizationParameters parameters);
 }
