@@ -66,7 +66,7 @@ public class FeeStructure : Aggregate<Guid>
         ModifiedOn = DateTime.UtcNow;
     }
 
-    public void AddFeeItem(FeeItem feeItem, Money amount, bool isOptional = false)
+    public void AddFeeItem(FeeItem feeItem, Money amount, bool isOptional = false, int displayOrder = 0)
     {
         DomainGuards.AgainstNull(feeItem, nameof(feeItem));
         DomainGuards.AgainstNull(amount, nameof(amount));
@@ -75,7 +75,7 @@ public class FeeStructure : Aggregate<Guid>
         if (_feeItems.Any(fi => fi.FeeItemId == feeItem.Id))
             throw new InvalidOperationException("Fee item already exists in this fee structure");
 
-        var feeStructureItem = FeeStructureItem.Create(feeItem.Id, amount, isOptional);
+        var feeStructureItem = FeeStructureItem.Create(feeItem.Id, amount, isOptional, displayOrder);
         _feeItems.Add(feeStructureItem);
     }
 
@@ -100,7 +100,7 @@ public class FeeStructure : Aggregate<Guid>
     public Money CalculateTotalFees()
     {
         var totalAmount = _feeItems
-            .Where(fi => !fi.IsOptional) // Only include mandatory fees in total
+            .Where(fi => !fi.IsOptional)
             .Sum(fi => fi.Amount.Amount);
 
         return new Money(totalAmount);

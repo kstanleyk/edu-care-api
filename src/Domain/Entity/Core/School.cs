@@ -57,6 +57,12 @@ public class School : Aggregate<Guid>
         ModifiedOn = DateTime.UtcNow;
     }
 
+    public void ChangeOrganization(Guid organizationId)
+    {
+        OrganizationId = organizationId;
+        ModifiedOn = DateTime.UtcNow;
+    }
+
     public void AddAcademicYear(AcademicYear academicYear)
     {
         DomainGuards.AgainstNull(academicYear, nameof(academicYear));

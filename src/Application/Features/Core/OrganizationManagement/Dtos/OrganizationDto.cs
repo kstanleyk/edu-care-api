@@ -9,7 +9,7 @@ public record OrganizationDto(
     Address? Address,
     DateTime CreatedOn,
     DateTime? ModifiedOn,
-    List<SchoolSummaryDto> Schools
+    List<SchoolDto> Schools
 );
 
 public record SchoolSummaryDto(
